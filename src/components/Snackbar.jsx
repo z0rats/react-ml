@@ -41,6 +41,6 @@ const CustomizedSnackbars = (props) => {
       </Snackbar>
     </div>
   );
-}
+};
 
 export default connect(mapStateToProps, actionCreators)(CustomizedSnackbars);

@@ -3,7 +3,7 @@ import { createAction } from 'redux-actions';
 export const updateCanvas = createAction('UPDATE_MNN_CANVAS');
 export const updateNetSettings = createAction('UPDATE_MNN_SETTINGS');
 export const addLayer = createAction('ADD_LAYER');
-export const removeLayer  = createAction('REMOVE_LAYER');
+export const removeLayer = createAction('REMOVE_LAYER');
 // export const updateLayer = createAction('UPDATE_LAYER');
 export const addNeuron = createAction('ADD_NEURON');
 export const removeNeuron = createAction('REMOVE_NEURON');

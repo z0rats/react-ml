@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions/mnn-actions.js';
-
+import _ from 'lodash';
 import MaterialTable from 'material-table';
 import CallSplitRoundedIcon from '@material-ui/icons/CallSplitRounded';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
-
-import _ from 'lodash';
+import * as actions from '../actions/mnn-actions.js';
 
 const mapStateToProps = (state) => {
   const { datasets, activeTableView } = state.mnn;
@@ -21,15 +19,16 @@ const actionCreators = {
 const idAliases = ['id', 'index'];
 
 const setColumns = (dataset) => {
-  const fields = dataset.meta.fields;
-  let columns = [];
-  
+  const { fields } = dataset.meta;
+  const columns = [];
+
   // if theres no id in columns then add id from tableData property
   const fieldsLowerCase = fields.map((f) => f.toLowerCase());
-  if (!fieldsLowerCase.some(field => idAliases.includes(field)))
+  if (!fieldsLowerCase.some((field) => idAliases.includes(field))) {
     columns.push({ title: 'id', render: (dataset) => dataset.tableData.id });
+  }
 
-  fields.forEach((name, i) => {
+  fields.forEach((name) => {
     const columnHeader = { title: name, field: name };
     columns.push(columnHeader);
   });
@@ -80,17 +79,17 @@ class TableView extends React.Component {
           }}
           actions={[
             {
-              icon: () => <CallSplitRoundedIcon color='primary'/>,
+              icon: () => <CallSplitRoundedIcon color="primary" />,
               tooltip: 'Разделить набор данных',
               isFreeAction: true,
               onClick: () => this.splitDataset(),
             },
             {
-              icon: () => <DeleteForeverRoundedIcon color='secondary'/>,
+              icon: () => <DeleteForeverRoundedIcon color="secondary" />,
               tooltip: 'Удалить набор данных',
               isFreeAction: true,
               onClick: () => this.deleteDataset(),
-            }
+            },
           ]}
         />
       </div>

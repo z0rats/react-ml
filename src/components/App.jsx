@@ -13,7 +13,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTab: 0
+      activeTab: 0,
     };
   }
 
@@ -39,12 +39,12 @@ export default class App extends React.Component {
           </Tabs>
         </Paper>
         {activeTab === 0 && (
-          <MultilayerNN/>
+          <MultilayerNN />
         )}
         {activeTab === 1 && (
-          <HopfieldNN/>
+          <HopfieldNN />
         )}
       </div>
     );
   }
-};
+}

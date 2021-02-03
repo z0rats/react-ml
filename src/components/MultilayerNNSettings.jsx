@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions/mnn-actions.js';
 
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
@@ -15,9 +14,10 @@ import Grid from '@material-ui/core/Grid';
 
 import activationFunctions from '../utils/activations.js';
 import Snackbar from './Snackbar';
+import * as actions from '../actions/mnn-actions.js';
 
 const mapStateToProps = (state) => {
-  const { 
+  const {
     datasets,
     networkSettings,
     trainingSetSelector,
@@ -27,7 +27,7 @@ const mapStateToProps = (state) => {
     datasets,
     networkSettings,
     trainingSetSelector,
-    testingSetSelector
+    testingSetSelector,
   };
 };
 
@@ -37,7 +37,7 @@ const actionCreators = {
   updateNetSettings: actions.updateNetSettings,
   setSnackbar: actions.setSnackbar,
   addNeuron: actions.addNeuron,
-  removeNeuron: actions.removeNeuron
+  removeNeuron: actions.removeNeuron,
 };
 
 const neuronPattern = {
@@ -53,7 +53,7 @@ class MultilayerNNSettings extends React.Component {
     const { updateNetSettings } = this.props;
     updateNetSettings({ activation: name });
   }
-  
+
   showErrorSnackbar = (snackbarMsg = 'err', snackbarType = 'error') => {
     const { setSnackbar } = this.props;
     setSnackbar({ snackbarOpen: true, snackbarMsg, snackbarType });
@@ -76,7 +76,9 @@ class MultilayerNNSettings extends React.Component {
   }
 
   handleChangeInputSize = (value) => {
-    const { networkSettings, updateNetSettings, removeNeuron, addNeuron } = this.props;
+    const {
+      networkSettings, updateNetSettings, removeNeuron, addNeuron,
+    } = this.props;
     const { minNeuronsInLayer, maxNeuronsInLayer } = networkSettings;
     const curInputSize = networkSettings.inputSize;
     const newInputSize = Number(value);
@@ -93,8 +95,10 @@ class MultilayerNNSettings extends React.Component {
   }
 
   handleChangeOutputSize = (value) => {
-    const { updateNetSettings, networkSettings, removeNeuron, addNeuron } = this.props;
-    const {minNeuronsInLayer, maxNeuronsInLayer } = networkSettings;
+    const {
+      updateNetSettings, networkSettings, removeNeuron, addNeuron,
+    } = this.props;
+    const { minNeuronsInLayer, maxNeuronsInLayer } = networkSettings;
     const curOutputSize = networkSettings.outputSize;
     const newOutputSize = Number(value);
 
@@ -120,7 +124,9 @@ class MultilayerNNSettings extends React.Component {
   }
 
   changeTrainingSet = (id) => {
-    const { testingSetSelector, changeTrainSetSelector, updateNetSettings, datasets } = this.props;
+    const {
+      testingSetSelector, changeTrainSetSelector, updateNetSettings, datasets,
+    } = this.props;
     if (id === testingSetSelector) {
       const errorMsg = 'Обучающий и тестовый наборы не могут быть одинаковыми!';
       this.showErrorSnackbar(errorMsg);
@@ -131,7 +137,9 @@ class MultilayerNNSettings extends React.Component {
   }
 
   changeTestingSet = (id) => {
-    const { trainingSetSelector, changeTestSetSelector, updateNetSettings, datasets } = this.props;
+    const {
+      trainingSetSelector, changeTestSetSelector, updateNetSettings, datasets,
+    } = this.props;
     if (id === trainingSetSelector) {
       const errorMsg = 'Обучающий и тестовый наборы не могут быть одинаковыми!';
       this.showErrorSnackbar(errorMsg);
@@ -142,7 +150,9 @@ class MultilayerNNSettings extends React.Component {
   }
 
   render() {
-    const { networkSettings, datasets, trainingSetSelector, testingSetSelector } = this.props;
+    const {
+      networkSettings, datasets, trainingSetSelector, testingSetSelector,
+    } = this.props;
     const activationsList = Object.keys(activationFunctions);
     console.log(networkSettings);
 
@@ -158,7 +168,7 @@ class MultilayerNNSettings extends React.Component {
               <Select
                 labelId="simple-select-placeholder-label-label"
                 value={networkSettings.activation}
-                onChange={e => this.handleChangeActivation(e.target.value)}
+                onChange={(e) => this.handleChangeActivation(e.target.value)}
                 displayEmpty
               >
                 {activationsList.map((name, i) => <MenuItem value={name} key={i}>{name}</MenuItem>)}
@@ -168,13 +178,13 @@ class MultilayerNNSettings extends React.Component {
           </Grid>
           <Grid item xs={5}>
             <FormControlLabel
-              control={
-                <Checkbox 
+              control={(
+                <Checkbox
                   color="primary"
                   checked={networkSettings.useBias}
                   onChange={this.handleChangeBias}
                 />
-              } 
+              )}
               label="Смещение"
             />
           </Grid>
@@ -186,7 +196,7 @@ class MultilayerNNSettings extends React.Component {
               margin="normal"
               variant="outlined"
               value={networkSettings.epochCount}
-              onChange={e => this.handleChangeEpoch(e.target.value)}
+              onChange={(e) => this.handleChangeEpoch(e.target.value)}
             />
           </Grid>
           <Grid item xs={6}>
@@ -196,7 +206,7 @@ class MultilayerNNSettings extends React.Component {
               margin="normal"
               variant="outlined"
               value={networkSettings.learningRate}
-              onChange={e => this.handleChangeLearnRate(e.target.value)}
+              onChange={(e) => this.handleChangeLearnRate(e.target.value)}
             />
           </Grid>
         </Grid>
@@ -210,7 +220,7 @@ class MultilayerNNSettings extends React.Component {
               <Select
                 labelId="simple-select-placeholder-label-label"
                 value={trainingSetSelector}
-                onChange={e => this.changeTrainingSet(e.target.value)}
+                onChange={(e) => this.changeTrainingSet(e.target.value)}
                 displayEmpty
               >
                 {datasets.map((ds, i) => <MenuItem value={i} key={i}>{ds.name}</MenuItem>)}
@@ -225,7 +235,7 @@ class MultilayerNNSettings extends React.Component {
               <Select
                 labelId="simple-select-placeholder-label-label"
                 value={testingSetSelector}
-                onChange={e => this.changeTestingSet(e.target.value)}
+                onChange={(e) => this.changeTestingSet(e.target.value)}
                 displayEmpty
               >
                 {datasets.map(({ name }, i) => <MenuItem value={i} key={i}>{name}</MenuItem>)}
@@ -239,7 +249,7 @@ class MultilayerNNSettings extends React.Component {
               margin="normal"
               variant="outlined"
               value={networkSettings.inputSize}
-              onChange={e => this.handleChangeInputSize(e.target.value)}
+              onChange={(e) => this.handleChangeInputSize(e.target.value)}
             />
           </Grid>
           <Grid item xs={6}>
@@ -249,13 +259,13 @@ class MultilayerNNSettings extends React.Component {
               margin="normal"
               variant="outlined"
               value={networkSettings.outputSize}
-              onChange={e => this.handleChangeOutputSize(e.target.value)}
+              onChange={(e) => this.handleChangeOutputSize(e.target.value)}
             />
           </Grid>
         </Grid>
-        <Snackbar/>
+        <Snackbar />
       </Paper>
-    )
+    );
   }
 }
 

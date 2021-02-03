@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions/mnn-actions.js';
-
 import Grid from '@material-ui/core/Grid';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
-
+import * as actions from '../actions/mnn-actions.js';
 import DatasetTableView from './DatasetTableView';
 
 const mapStateToProps = (state) => {
@@ -20,7 +18,9 @@ const actionCreators = {
 };
 
 const TabPanel = (props) => {
-  const { children, value, index, ...other } = props;
+  const {
+    children, value, index, ...other
+  } = props;
 
   return (
     <div
@@ -37,7 +37,7 @@ const TabPanel = (props) => {
       )}
     </div>
   );
-}
+};
 
 class DataTabs extends React.Component {
   handleChangeTable = (e, tableId) => {
@@ -57,17 +57,17 @@ class DataTabs extends React.Component {
             value={activeTableView}
             onChange={this.handleChangeTable}
           >
-            {datasets.map((ds, i) => <Tab key={i} label={ds.name}/>)}
+            {datasets.map((ds, i) => <Tab key={i} label={ds.name} />)}
           </Tabs>
         </Grid>
         <Grid item xs={10}>
-          {datasets.map((ds, i) =>
+          {datasets.map((ds, i) => (
             <TabPanel key={i} value={activeTableView} index={i}>
               <DatasetTableView
                 id={i}
               />
             </TabPanel>
-          )}   
+          ))}
         </Grid>
       </Grid>
     );

@@ -1,13 +1,12 @@
+import _ from 'lodash';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 import * as actions from '../actions/mnn-actions.js';
-import { generateWeights } from '../neuralNetworks/utils.js';
-
-import _ from 'lodash';
+import { generateWeights } from '../utils/utils.js';
 
 const updateWeights = (layerId, layers) => {
   const startLayer = layerId === 0 ? 0 : layerId - 1;
-  
+
   for (let lIndex = startLayer; lIndex < layers.length; lIndex += 1) {
     const layer = layers[lIndex];
     let numOfWeights = 0;
@@ -19,9 +18,9 @@ const updateWeights = (layerId, layers) => {
       n.weights = newWeights;
     });
   }
-  
+
   return layers;
-}
+};
 
 const neuronPattern = {
   weights: [],
@@ -29,14 +28,14 @@ const neuronPattern = {
   delta: 0,
   output: 0,
   error: 0,
-}
+};
 
 const layerPattern = {
   neurons: [
     { ...neuronPattern },
     { ...neuronPattern },
-    { ...neuronPattern }
-  ]
+    { ...neuronPattern },
+  ],
 };
 
 const mnnInitialState = {
@@ -50,7 +49,7 @@ const mnnInitialState = {
           output: 0,
           error: 0,
         },
-      ]
+      ],
     },
     {
       neurons: [
@@ -61,8 +60,8 @@ const mnnInitialState = {
           output: 0,
           error: 0,
         },
-      ]
-    }
+      ],
+    },
   ],
   inputSize: 1,
   outputSize: 1,
@@ -75,7 +74,7 @@ const mnnInitialState = {
   learningRate: 0.1,
   costSum: 0,
   testResults: {
-    accuracy: 0
+    accuracy: 0,
   },
   useBias: false,
   trainingSetId: '',
@@ -114,9 +113,8 @@ const networkSettings = handleActions({
       const newLayers = updateWeights(lastIndex - 1, layersCopy);
 
       return { ...state, layers: newLayers };
-    } else {
-      return state;
     }
+    return state;
   },
   [actions.removeLayer](state) {
     const { layers, minLayers } = state;
@@ -130,9 +128,8 @@ const networkSettings = handleActions({
       const newLayers = updateWeights(beforeLastIndex - 1, layersCopy);
 
       return { ...state, layers: newLayers };
-    } else {
-      return state;
     }
+    return state;
   },
   [actions.addNeuron](state, { payload }) {
     const { layerId } = payload;
@@ -140,7 +137,7 @@ const networkSettings = handleActions({
     layersCopy[layerId].neurons.push(neuronPattern);
 
     const newLayers = updateWeights(layerId, layersCopy);
-    
+
     return { ...state, layers: newLayers };
   },
   [actions.removeNeuron](state, { payload }) {
@@ -149,7 +146,7 @@ const networkSettings = handleActions({
     layersCopy[layerId].neurons.splice(-1, 1);
 
     const newLayers = updateWeights(layerId, layersCopy);
-    
+
     return { ...state, layers: newLayers };
   },
 }, mnnInitialState);
@@ -207,7 +204,7 @@ const snackbar = handleActions({
 }, {
   snackbarOpen: false,
   snackbarType: 'info',
-  snackbarMsg: ''
+  snackbarMsg: '',
 });
 
 export default combineReducers({
@@ -219,5 +216,5 @@ export default combineReducers({
   snackbar,
   trainingSetSelector,
   testingSetSelector,
-  uploadingSettings
+  uploadingSettings,
 });

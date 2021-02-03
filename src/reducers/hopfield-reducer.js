@@ -19,7 +19,7 @@ const canvasSettings = handleActions({
   netImageData: null,
   squareSize: 45,
   gridSize: 10,
-  isDrawing: false
+  isDrawing: false,
 });
 
 const networkSettings = handleActions({
@@ -28,18 +28,19 @@ const networkSettings = handleActions({
   },
   [actions.updateCurrentImageByIndex](state, { payload }) {
     const { id, newValue } = payload;
-    return { ...state, currentImage: state.currentImage.map((curVal, index) => 
-      index === id ? newValue : curVal)
+    return {
+      ...state,
+      currentImage: state.currentImage.map((curVal, index) => index === id ? newValue : curVal),
     };
   },
 }, {
   inputNodes: 100,
   currentImage: new Array(100).fill(-1),
   weights: createWeightsMatrix(100),
-  netOutput: new Array(100).fill(-1)
+  netOutput: new Array(100).fill(-1),
 });
 
 export default combineReducers({
   canvasSettings,
-  networkSettings
+  networkSettings,
 });

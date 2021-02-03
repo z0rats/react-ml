@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions/hopfield-actions.js';
-
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Slider from '@material-ui/core/Slider';
 import Grid from '@material-ui/core/Grid';
-
 import _ from 'lodash';
+import * as actions from '../actions/hopfield-actions.js';
 
 const mapStateToProps = (state) => {
   const { networkSettings, canvasSettings } = state.hopfield;
@@ -29,23 +27,27 @@ const getNewSquareCoords = (ref, clientX, clientY, size) => {
   const x = Math.ceil((clientX - rect.left) / size) - 1;
   const y = Math.ceil((clientY - rect.top) / size) - 1;
   return { x, y };
-}
+};
 
 const createWeightsMatrix = (size) => {
-  let w = [];
-  for (let i = 0; i < size; i += 1) 
+  const w = [];
+  for (let i = 0; i < size; i += 1) {
     w[i] = new Array(size).fill(0);
+  }
   return w;
-}
+};
 
 class HopfieldNet extends Component {
   userCanvasRef = React.createRef();
+
   netCanvasRef = React.createRef();
-  
+
   componentDidMount() {
     const { canvasSettings, updateCanvas } = this.props;
-    const { userImageData, netImageData, canvasWidth, canvasHeight } = canvasSettings;
-    
+    const {
+      userImageData, netImageData, canvasWidth, canvasHeight,
+    } = canvasSettings;
+
     const userContext = this.userCanvasRef.current.getContext('2d');
     const netContext = this.netCanvasRef.current.getContext('2d');
     if (_.isNull(userImageData) || _.isNull(netImageData)) {
@@ -61,17 +63,19 @@ class HopfieldNet extends Component {
   }
 
   drawGrid = (ctx) => {
-    const { gridSize, squareSize, canvasWidth, canvasHeight } = this.props.canvasSettings;
+    const {
+      gridSize, squareSize, canvasWidth, canvasHeight,
+    } = this.props.canvasSettings;
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.beginPath();
-    ctx.fillStyle = "white";
+    ctx.fillStyle = 'white';
     ctx.lineWidth = 3;
     ctx.strokeStyle = 'black';
     for (let row = 0; row < gridSize; row += 1) {
       for (let column = 0; column < gridSize; column += 1) {
-        let x = column * squareSize;
-        let y = row * squareSize;
+        const x = column * squareSize;
+        const y = row * squareSize;
         ctx.rect(x, y, squareSize, squareSize);
         ctx.fill();
         ctx.stroke();
@@ -81,17 +85,22 @@ class HopfieldNet extends Component {
   }
 
   handleMouseDown = (e) => {
-    const { networkSettings, canvasSettings, updateCanvas, updateCurrentImageByIndex } = this.props;
-    const { gridSize, squareSize, canvasWidth, canvasHeight } = canvasSettings;
+    const {
+      networkSettings, canvasSettings, updateCanvas, updateCurrentImageByIndex,
+    } = this.props;
+    const {
+      gridSize, squareSize, canvasWidth, canvasHeight,
+    } = canvasSettings;
     const { inputNodes, currentImage } = networkSettings;
 
     const { offsetX, offsetY } = e.nativeEvent;
     const userContext = this.userCanvasRef.current.getContext('2d');
-    userContext.fillStyle = "black";
+    userContext.fillStyle = 'black';
     userContext.fillRect(
-          Math.floor(offsetX / squareSize) * squareSize, 
-          Math.floor(offsetY / squareSize) * squareSize,
-          squareSize, squareSize);
+      Math.floor(offsetX / squareSize) * squareSize,
+      Math.floor(offsetY / squareSize) * squareSize,
+      squareSize, squareSize,
+    );
     const imageData = userContext.getImageData(0, 0, canvasWidth, canvasHeight);
     updateCanvas({ userImageData: imageData, isDrawing: true });
 
@@ -104,19 +113,24 @@ class HopfieldNet extends Component {
   }
 
   handleMouseMove = (e) => {
-    const { networkSettings, canvasSettings, updateCanvas, updateCurrentImageByIndex } = this.props;
-    const { isDrawing, gridSize, squareSize, canvasWidth, canvasHeight } = canvasSettings;
+    const {
+      networkSettings, canvasSettings, updateCanvas, updateCurrentImageByIndex,
+    } = this.props;
+    const {
+      isDrawing, gridSize, squareSize, canvasWidth, canvasHeight,
+    } = canvasSettings;
     const { currentImage, inputNodes } = networkSettings;
-    
+
     if (!isDrawing) return;
 
     const { offsetX, offsetY } = e.nativeEvent;
     const userContext = this.userCanvasRef.current.getContext('2d');
-    userContext.fillStyle = "black";
+    userContext.fillStyle = 'black';
     userContext.fillRect(
-        Math.floor(offsetX / squareSize) * squareSize, 
-        Math.floor(offsetY / squareSize) * squareSize,
-        squareSize, squareSize);
+      Math.floor(offsetX / squareSize) * squareSize,
+      Math.floor(offsetY / squareSize) * squareSize,
+      squareSize, squareSize,
+    );
 
     const { clientX, clientY } = e;
     const coords = getNewSquareCoords(this.userCanvasRef, clientX, clientY, squareSize);
@@ -140,7 +154,7 @@ class HopfieldNet extends Component {
     const { updateNetSettings, canvasSettings } = this.props;
     const { gridSize } = canvasSettings;
     updateNetSettings({
-      currentImage: new Array(gridSize * gridSize).fill(-1)
+      currentImage: new Array(gridSize * gridSize).fill(-1),
     });
   }
 
@@ -150,12 +164,12 @@ class HopfieldNet extends Component {
     updateCanvas({
       gridSize: newSize,
       canvasWidth: newSize * squareSize,
-      canvasHeight: newSize * squareSize
+      canvasHeight: newSize * squareSize,
     });
     updateNetSettings({
       inputNodes: newSize * newSize,
       currentImage: new Array(newSize * newSize).fill(-1),
-      netOutput: new Array(newSize * newSize).fill(-1)
+      netOutput: new Array(newSize * newSize).fill(-1),
     });
 
     this.redrawGrids();
@@ -164,7 +178,7 @@ class HopfieldNet extends Component {
 
   redrawGrids = () => {
     const userContext = this.userCanvasRef.current.getContext('2d');
-    const netContext = this.netCanvasRef.current.getContext('2d');    
+    const netContext = this.netCanvasRef.current.getContext('2d');
     this.drawGrid(userContext);
     this.drawGrid(netContext);
   }
@@ -173,20 +187,18 @@ class HopfieldNet extends Component {
     const { updateNetSettings } = this.props;
     const { inputNodes } = this.props.networkSettings;
     updateNetSettings({
-      weights: createWeightsMatrix(inputNodes)
+      weights: createWeightsMatrix(inputNodes),
     });
   }
 
   updateWeights = () => {
     const { updateNetSettings, networkSettings } = this.props;
     const { weights, currentImage } = networkSettings;
-    const newWeights = [...weights].map((nested, i) =>
-      nested.map((w, j) => {
-        if (i === j) w = 0;
-        else w += currentImage[i] * currentImage[j];
-        return w;
-      })
-    );
+    const newWeights = [...weights].map((nested, i) => nested.map((w, j) => {
+      if (i === j) w = 0;
+      else w += currentImage[i] * currentImage[j];
+      return w;
+    }));
 
     updateNetSettings({ weights: newWeights });
   }
@@ -194,20 +206,20 @@ class HopfieldNet extends Component {
   recognizeSignal = () => {
     const { updateNetSettings, networkSettings } = this.props;
     const { weights, currentImage } = networkSettings;
-    
+
     let prevNetState;
     let currNetState;
     do {
       currNetState = weights.map((nested) => {
         const sum = nested.reduce((prev, cur, j) => prev + cur * currentImage[j]);
-        return sum >= 0 ? 1 : -1; 
+        return sum >= 0 ? 1 : -1;
       });
       prevNetState = [...currNetState];
     } while (!_.isEqual(currNetState, prevNetState));
-    
+
     const context = this.netCanvasRef.current.getContext('2d');
     this.drawFromArray(currNetState, context);
-    
+
     updateNetSettings({ netOutput: currNetState });
   }
 
@@ -215,10 +227,10 @@ class HopfieldNet extends Component {
     const { canvasSettings, updateCanvas } = this.props;
     const { gridSize, squareSize } = canvasSettings;
     const twoDimData = [];
-    while(data.length) twoDimData.push(data.splice(0, gridSize));
+    while (data.length) twoDimData.push(data.splice(0, gridSize));
 
     this.drawGrid(ctx);
-    ctx.fillStyle = "black";
+    ctx.fillStyle = 'black';
 
     for (let i = 0; i < gridSize; i += 1) {
       for (let j = 0; j < gridSize; j += 1) {
@@ -232,23 +244,23 @@ class HopfieldNet extends Component {
   }
 
   render() {
-    const {canvasWidth, canvasHeight, gridSize } = this.props.canvasSettings;
+    const { canvasWidth, canvasHeight, gridSize } = this.props.canvasSettings;
 
     return (
-      <div style = {{ paddingTop: 15 }}>
+      <div style={{ paddingTop: 15 }}>
         <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item xs = {5}>
-            <canvas 
-              ref={this.userCanvasRef} 
+          <Grid item xs={5}>
+            <canvas
+              ref={this.userCanvasRef}
               width={canvasWidth}
-              height={canvasHeight} 
+              height={canvasHeight}
               onMouseDown={this.handleMouseDown}
               onMouseMove={this.handleMouseMove}
               onMouseUp={this.stopDrawing}
               onMouseLeave={this.stopDrawing}
-            />          
+            />
           </Grid>
-          <Grid item xs = {2} >
+          <Grid item xs={2}>
             <Typography id="discrete-slider" paragraph>
               Размер сетки
             </Typography>
@@ -263,15 +275,15 @@ class HopfieldNet extends Component {
               max={12}
             />
           </Grid>
-          <Grid item xs = {5}>
-            <canvas 
+          <Grid item xs={5}>
+            <canvas
               ref={this.netCanvasRef}
               width={canvasWidth}
               height={canvasHeight}
             />
           </Grid>
         </Grid>
-        <Grid container justify="space-evenly" style = {{ padding: 15 }} item xs = {5}>
+        <Grid container justify="space-evenly" style={{ padding: 15 }} item xs={5}>
           <Button
             color="primary"
             variant="contained"
@@ -295,8 +307,8 @@ class HopfieldNet extends Component {
           </Button>
         </Grid>
       </div>
-    )
-  }  
-};
+    );
+  }
+}
 
 export default connect(mapStateToProps, actionCreators)(HopfieldNet);

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions/mnn-actions.js';
+import _ from 'lodash';
+import papa from 'papaparse';
+import Dropzone from 'react-dropzone-uploader';
+import 'react-dropzone-uploader/dist/styles.css';
 
 import PlayCircleFilledRoundedIcon from '@material-ui/icons/PlayCircleFilledRounded';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
@@ -9,21 +12,15 @@ import IconButton from '@material-ui/core/IconButton';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-
-import Dropzone from 'react-dropzone-uploader';
-import 'react-dropzone-uploader/dist/styles.css';
 
 import DatasetTabs from './DatasetTabs';
 import MultilayerNNSettings from './MultilayerNNSettings';
 import { generateWeights, extractLastColumn, smallValuesArr } from '../utils/utils.js';
 import normalization from '../utils/normalization.js';
 import activations from '../utils/activations.js';
-
-import _ from 'lodash';
-import papa from 'papaparse';
+import * as actions from '../actions/mnn-actions.js';
 
 const mapStateToProps = (state) => {
   const {
@@ -31,9 +28,11 @@ const mapStateToProps = (state) => {
     activeTab,
     datasets,
     canvasSettings,
-    networkSettings
+    networkSettings,
   } = state.mnn;
-  return { uploadingSettings, activeTab, datasets, canvasSettings, networkSettings };
+  return {
+    uploadingSettings, activeTab, datasets, canvasSettings, networkSettings,
+  };
 };
 
 const actionCreators = {
@@ -45,38 +44,29 @@ const actionCreators = {
   addDataset: actions.addDataset,
 };
 
-const readCsv = (file, options) => {
-  return new Promise(resolve => {
+const readCsv = (file, options) => (
+  new Promise((resolve) => {
     papa.parse(file, {
       skipEmptyLines: options.skipEmptyLines,
       header: options.headers,
-      complete: results => {
+      complete: (results) => {
         resolve(results);
-      }
+      },
     });
-  });
-};
+  })
+);
 
 const createDataSet = (name, rawData) => {
   const nameWithoutExtension = name.split('.').slice(0, -1).join('.');
   const result = rawData;
-  
-  return { id: _.uniqueId(), name: nameWithoutExtension, data: result.data, meta: result.meta };
+
+  return {
+    id: _.uniqueId(), name: nameWithoutExtension, data: result.data, meta: result.meta,
+  };
 };
 
 class MultilayerNN extends Component {
   canvasRef = React.createRef();
-
-  componentDidUpdate(prevProps) {
-    const { networkSettings, canvasSettings, updateCanvas } = this.props;
-    const { canvasWidth, canvasHeight } = canvasSettings;
-    
-    if(!_.isEqual(networkSettings.layers, prevProps.networkSettings.layers)) {
-      const ctx = this.canvasRef.current.getContext('2d');
-      // this.updateWeights(networkSettings.layers);
-      this.drawNetworkLayers(ctx, networkSettings.layers);
-    }
-  }
 
   componentDidMount() {
     const { canvasSettings, updateCanvas, networkSettings } = this.props;
@@ -92,6 +82,17 @@ class MultilayerNN extends Component {
     updateCanvas({ canvasImageData: imageData });
   }
 
+  componentDidUpdate(prevProps) {
+    const { networkSettings, canvasSettings, updateCanvas } = this.props;
+    const { canvasWidth, canvasHeight } = canvasSettings;
+
+    if (!_.isEqual(networkSettings.layers, prevProps.networkSettings.layers)) {
+      const ctx = this.canvasRef.current.getContext('2d');
+      // this.updateWeights(networkSettings.layers);
+      this.drawNetworkLayers(ctx, networkSettings.layers);
+    }
+  }
+
   getNeuronCoord = (isEven, index, middleIndex, radius, axisPadding, canvasAxisCenter) => {
     if (isEven) {
       if (index < middleIndex) {
@@ -100,29 +101,30 @@ class MultilayerNN extends Component {
       }
       const margin = (index + 1 - middleIndex) * (radius * axisPadding);
       return canvasAxisCenter + margin;
-    } else {
-      if (index === middleIndex) return canvasAxisCenter;
-      if (index < middleIndex) {
-        const margin = (middleIndex - index) * (radius * axisPadding);
-        return canvasAxisCenter - margin;
-      }
-      const margin = (index - middleIndex) * (radius * axisPadding);
-      return canvasAxisCenter + margin;
     }
+    if (index === middleIndex) return canvasAxisCenter;
+    if (index < middleIndex) {
+      const margin = (middleIndex - index) * (radius * axisPadding);
+      return canvasAxisCenter - margin;
+    }
+    const margin = (index - middleIndex) * (radius * axisPadding);
+    return canvasAxisCenter + margin;
   }
 
   drawNetworkLayers = (ctx, layers) => {
     const { updateCanvas, networkSettings, canvasSettings } = this.props;
-    const { canvasWidth, canvasHeight, neuronRadius, inputDotRadius, paddingX, paddingY } = canvasSettings;
+    const {
+      canvasWidth, canvasHeight, neuronRadius, inputDotRadius, paddingX, paddingY,
+    } = canvasSettings;
     //  { layers } = networkSettings;
     console.log(layers);
-    
+
     const canvasCenterX = canvasWidth / 2;
     const canvasCenterY = canvasHeight / 2;
     const layersCount = layers.length;
     const middleLayerIndex = Math.floor(layersCount / 2);
     const isNumberOfLayersEven = layersCount % 2 === 0;
-    
+
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -179,7 +181,7 @@ class MultilayerNN extends Component {
   }
 
   handleSubmit = (files, allFiles) => {
-    allFiles.forEach(f => f.remove());
+    allFiles.forEach((f) => f.remove());
     const { addDataset, uploadingSettings } = this.props;
 
     files.forEach(async ({ file }) => {
@@ -207,7 +209,7 @@ class MultilayerNN extends Component {
 
   updateWeights = (from = 0, layers) => {
     const { updateNetSettings } = this.props;
-    
+
     for (let lIndex = from; lIndex < layers.length; lIndex += 1) {
       const layer = layers[lIndex];
       let numOfWeights = 0;
@@ -227,7 +229,7 @@ class MultilayerNN extends Component {
     const { activation } = networkSettings;
     // const layers = _.cloneDeep(networkSettings.layers);
     const activationFunction = activations[activation];
-    
+
     // init first layer
     layers[0].neurons.forEach((n, i) => {
       n.output = inputs[i];
@@ -250,7 +252,7 @@ class MultilayerNN extends Component {
 
       for (let nIndex = 0; nIndex < currLayer.neurons.length; nIndex += 1) {
         const currNeuron = currLayer.neurons[nIndex];
-        let output = currNeuron.output;
+        const { output } = currNeuron;
 
         let error = 0;
         if (lIndex === layers.length - 1) {
@@ -278,7 +280,7 @@ class MultilayerNN extends Component {
       const currLayer = layers[lIndex];
 
       currLayer.neurons.forEach((currNeuron, nIndex) => {
-        const delta = currNeuron.delta;
+        const { delta } = currNeuron;
         prevLayer.neurons.forEach((n) => {
           n.weights[nIndex] += networkSettings.learningRate * delta * n.output;
           // n.weights.forEach((w, i) => w += this.learningRate * delta * n.output);
@@ -294,7 +296,9 @@ class MultilayerNN extends Component {
 
   startTraining = async () => {
     const { updateNetSettings, networkSettings, datasets } = this.props;
-    const { layers, trainingSetId, testingSetId, epochCount } = networkSettings;
+    const {
+      layers, trainingSetId, testingSetId, epochCount,
+    } = networkSettings;
     if (this.isNetworkReady()) {
       updateNetSettings({ state: 'training' });
       const trainingSet = datasets.find((ds) => ds.id === trainingSetId);
@@ -304,7 +308,7 @@ class MultilayerNN extends Component {
       const normalizedTrainData = normalization.minMaxNegative(trainingSetData);
       const ctx = this.canvasRef.current.getContext('2d');
 
-      let prevNetState, forwardRes, backwardRes, costSum;
+      let prevNetState; let forwardRes; let backwardRes; let costSum;
       const layersCount = layers.length - 1;
       // for (let epoch = 0; epoch < epochCount; epoch += 1) {
       //   costSum = 0;
@@ -327,8 +331,8 @@ class MultilayerNN extends Component {
       //   costSum /= normalizedTrainData.length;
       //   console.log('Ошибка сети', costSum);
       // }
-      
-      const timer = ms => new Promise(res => setTimeout(res, ms));
+
+      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
 
       for (let epoch = 0; epoch < epochCount; epoch += 1) {
         costSum = 0;
@@ -349,7 +353,7 @@ class MultilayerNN extends Component {
           this.drawNetworkLayers(ctx, backwardRes);
           await timer(50);
         }
-        
+
         costSum /= (normalizedTrainData.length * 2);
         console.log('Ошибка сети', costSum);
       }
@@ -381,7 +385,7 @@ class MultilayerNN extends Component {
         const maxVal = Math.max(...result);
         const prediction = result.indexOf(maxVal);
         const expected = testExpected[i];
-        
+
         if (Number(prediction) !== Number(expected)) wrongCount += 1;
       });
       const accuracy = 100 - (wrongCount / testingSetData.length) * 100;
@@ -404,7 +408,9 @@ class MultilayerNN extends Component {
   }
 
   render() {
-    const { canvasSettings, uploadingSettings, addLayer, removeLayer, networkSettings } = this.props;
+    const {
+      canvasSettings, uploadingSettings, addLayer, removeLayer, networkSettings,
+    } = this.props;
     const { canvasWidth, canvasHeight } = canvasSettings;
     const { headers, skipEmptyLines } = uploadingSettings;
 
@@ -412,41 +418,39 @@ class MultilayerNN extends Component {
       <Grid container style={{ padding: 20 }} spacing={2}>
         <Grid item xs={4}>
           <FormControlLabel
-            control={
-              <Checkbox 
+            control={(
+              <Checkbox
                 color="primary"
                 checked={headers}
                 onChange={this.handleChangeHeaders}
               />
-            } 
+            )}
             label="Строка заголовка"
           />
           <FormControlLabel
-            control={
-              <Checkbox 
+            control={(
+              <Checkbox
                 color="primary"
                 checked={skipEmptyLines}
                 onChange={this.handleChangeSkipEmptyLines}
               />
-            } 
+            )}
             label="Пропускать пустые строки"
           />
           <Dropzone
-            submitButtonContent={'Загрузить'}
-            inputWithFilesContent={'Добавить файлы'}
-            inputContent='Перетащите файлы или нажмите сюда'
+            submitButtonContent="Загрузить"
+            inputWithFilesContent="Добавить файлы"
+            inputContent="Перетащите файлы или нажмите сюда"
             canCancel={false}
             onSubmit={this.handleSubmit}
-            accept='.csv'
+            accept=".csv"
           />
-          <br/>
+          <br />
           <MultilayerNNSettings />
         </Grid>
         <Grid item xs={8}>
-          <Paper elevation={1}>
-            
-          </Paper>
-          <br/>
+          <Paper elevation={1} />
+          <br />
           <DatasetTabs />
         </Grid>
         <Grid container alignItems="center">
@@ -489,13 +493,14 @@ class MultilayerNN extends Component {
         <Grid item xs={12}>
           <Paper elevation={2}>
             <canvas
-              ref = {this.canvasRef}
-              width = {canvasWidth} height = {canvasHeight}
+              ref={this.canvasRef}
+              width={canvasWidth}
+              height={canvasHeight}
             />
           </Paper>
         </Grid>
       </Grid>
-    )
+    );
   }
 }
 
