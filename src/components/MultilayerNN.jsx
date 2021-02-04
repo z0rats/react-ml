@@ -65,6 +65,8 @@ const createDataSet = (name, rawData) => {
   };
 };
 
+const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+
 class MultilayerNN extends Component {
   canvasRef = React.createRef();
 
@@ -132,11 +134,15 @@ class MultilayerNN extends Component {
       const layerLength = layer.neurons.length;
       const middleNeuronIndex = Math.floor(layerLength / 2);
       const isNumberOfNeuronsEven = layerLength % 2 === 0;
-      const centerX = this.getNeuronCoord(isNumberOfLayersEven, lIndex, middleLayerIndex, neuronRadius, paddingX, canvasCenterX);
+      const centerX = this.getNeuronCoord(
+        isNumberOfLayersEven, lIndex, middleLayerIndex, neuronRadius, paddingX, canvasCenterX,
+      );
 
       for (let nIndex = 0; nIndex < layerLength; nIndex += 1) {
         const neuron = layer.neurons[nIndex];
-        const centerY = this.getNeuronCoord(isNumberOfNeuronsEven, nIndex, middleNeuronIndex, neuronRadius, paddingY, canvasCenterY);
+        const centerY = this.getNeuronCoord(
+          isNumberOfNeuronsEven, nIndex, middleNeuronIndex, neuronRadius, paddingY, canvasCenterY,
+        );
 
         ctx.beginPath();
         if (lIndex === 0) {
@@ -152,7 +158,9 @@ class MultilayerNN extends Component {
 
         ctx.fillStyle = 'black';
         ctx.font = '20px serif';
-        if (lIndex !== 0) ctx.fillText(neuron.output.toFixed(2), centerX, centerY, neuronRadius * 2);
+        if (lIndex !== 0) {
+          ctx.fillText(neuron.output.toFixed(2), centerX, centerY, neuronRadius * 2);
+        }
         // else console.log(neuron.output);
 
         if (lIndex < layersCount - 1) {
@@ -240,7 +248,8 @@ class MultilayerNN extends Component {
       for (let j = 0; j < layer.neurons.length; j += 1) {
         const neuron = layer.neurons[j];
         const b = neuron.bias;
-        const connectionsValue = layers[lIndex - 1].neurons.reduce((prev, curN) => prev + curN.weights[j] * curN.output, 0);
+        const connectionsValue = layers[lIndex - 1].neurons.reduce((prev, curN) => (
+          prev + curN.weights[j] * curN.output), 0);
 
         // neuron.setOutput(this.activation(b + connectionsValue));
         neuron.output = activationFunction.activate(b + connectionsValue);
@@ -259,7 +268,8 @@ class MultilayerNN extends Component {
           error = (1 / 2) * (targets[nIndex] - output) ** 2;
         } else {
           const nextLayer = layers[lIndex + 1];
-          error = currNeuron.weights.reduce((prev, curr, index) => prev + curr * nextLayer.neurons[index].delta, 0);
+          error = currNeuron.weights.reduce((prev, curr, index) => (
+            prev + curr * nextLayer.neurons[index].delta), 0);
         }
         currNeuron.error = error;
         const delta = activationFunction.delta(error, output);
@@ -332,8 +342,6 @@ class MultilayerNN extends Component {
       //   console.log('Ошибка сети', costSum);
       // }
 
-      const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-
       for (let epoch = 0; epoch < epochCount; epoch += 1) {
         costSum = 0;
         for (let i = 0; i < normalizedTrainData.length; i += 1) {
@@ -364,7 +372,7 @@ class MultilayerNN extends Component {
       const normalizedTestData = normalization.minMaxNegative(testingSetData);
 
       let wrongCount = 0;
-      normalizedTestData.forEach((datarow, i) => {
+      normalizedTestData.forEach((datarow, rowId) => {
         backwardRes[0].neurons.forEach((n, i) => {
           n.output = datarow[i];
         });
@@ -374,7 +382,8 @@ class MultilayerNN extends Component {
           for (let j = 0; j < layer.neurons.length; j += 1) {
             const neuron = layer.neurons[j];
             const b = neuron.bias;
-            const connectionsValue = backwardRes[lIndex - 1].neurons.reduce((prev, curN) => prev + curN.weights[j] * curN.output, 0);
+            const connectionsValue = backwardRes[lIndex - 1].neurons.reduce((prev, curN) => (
+              prev + curN.weights[j] * curN.output), 0);
             const activationFunction = activations[networkSettings.activation];
             neuron.output = activationFunction.activate(b + connectionsValue);
           }
@@ -384,7 +393,7 @@ class MultilayerNN extends Component {
 
         const maxVal = Math.max(...result);
         const prediction = result.indexOf(maxVal);
-        const expected = testExpected[i];
+        const expected = testExpected[rowId];
 
         if (Number(prediction) !== Number(expected)) wrongCount += 1;
       });
@@ -467,10 +476,10 @@ class MultilayerNN extends Component {
             </IconButton>
           </Grid>
           <Grid item xs={2}>
-            Функция потерь: {networkSettings.costSum}
+            {`Функция потерь: ${networkSettings.costSum}`}
           </Grid>
           <Grid item xs={2}>
-            Точность на тестовом наборе: {networkSettings.testResults.accuracy.toFixed(2)} %
+            {`Точность на тестовом наборе: ${networkSettings.testResults.accuracy.toFixed(2)} %`}
           </Grid>
           <Grid item xs={10}>
             <IconButton
