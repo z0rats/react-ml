@@ -18,9 +18,7 @@ const actionCreators = {
 };
 
 const TabPanel = (props) => {
-  const {
-    children, value, index, ...other
-  } = props;
+  const { children, value, index } = props;
 
   return (
     <div
@@ -28,7 +26,6 @@ const TabPanel = (props) => {
       hidden={value !== index}
       id={`vertical-tabpanel-${index}`}
       aria-labelledby={`vertical-tab-${index}`}
-      {...other}
     >
       {value === index && (
         <Box p={3}>

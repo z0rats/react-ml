@@ -30,7 +30,7 @@ const networkSettings = handleActions({
     const { id, newValue } = payload;
     return {
       ...state,
-      currentImage: state.currentImage.map((curVal, index) => index === id ? newValue : curVal),
+      currentImage: state.currentImage.map((curVal, index) => (index === id ? newValue : curVal)),
     };
   },
 }, {

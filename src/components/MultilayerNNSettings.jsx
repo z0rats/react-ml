@@ -40,14 +40,6 @@ const actionCreators = {
   removeNeuron: actions.removeNeuron,
 };
 
-const neuronPattern = {
-  weights: [],
-  bias: 0,
-  delta: 0,
-  output: 0,
-  error: 0,
-};
-
 class MultilayerNNSettings extends React.Component {
   handleChangeActivation = (name) => {
     const { updateNetSettings } = this.props;

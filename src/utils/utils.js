@@ -11,7 +11,7 @@ export const generateWeights = (length) => {
 
 export const smallValuesArr = (len) => new Array(len).fill(0.01);
 
-export const transpose = (array) => array[0].map((_, colIndex) => array.map((row) => row[colIndex]));
+export const transpose = (arr) => arr[0].map((_, colIndex) => arr.map((row) => row[colIndex]));
 
 export const extractFirstColumn = (data) => {
   const column = [];
