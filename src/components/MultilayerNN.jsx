@@ -320,27 +320,6 @@ class MultilayerNN extends Component {
 
       let prevNetState; let forwardRes; let backwardRes; let costSum;
       const layersCount = layers.length - 1;
-      // for (let epoch = 0; epoch < epochCount; epoch += 1) {
-      //   costSum = 0;
-      //   for (let i = 0; i < normalizedTrainData.length; i += 1) {
-      //     const inputs = normalizedTrainData[i];
-      //     i === 0 ? prevNetState = _.cloneDeep(layers) : prevNetState = _.cloneDeep(backwardRes);
-
-      //     const targets = smallValuesArr(outputSize);
-      //     targets[trainExpected[i]] = 0.99;
-
-      //     forwardRes = this.makeForwardPass(inputs, targets, prevNetState);
-      //     backwardRes = this.makeBackwardPass(forwardRes);
-
-      //     const outputLayer = backwardRes[layersCount];
-      //     const curTrainingSampleCost = outputLayer.neurons.reduce((prev, cur) => prev += cur.error, 0);
-      //     costSum += curTrainingSampleCost;
-
-      //     this.drawNetworkLayers(ctx, backwardRes);
-      //   }
-      //   costSum /= normalizedTrainData.length;
-      //   console.log('Ошибка сети', costSum);
-      // }
 
       for (let epoch = 0; epoch < epochCount; epoch += 1) {
         costSum = 0;
@@ -355,11 +334,13 @@ class MultilayerNN extends Component {
           backwardRes = this.makeBackwardPass(forwardRes);
 
           const outputLayer = backwardRes[layersCount];
-          const curTrainingSampleCost = outputLayer.neurons.reduce((prev, cur) => prev += cur.error, 0);
+          // possible error here with prev+=
+          const curTrainingSampleCost = outputLayer.neurons.reduce((prev, cur) => (
+            prev + cur.error), 0);
           costSum += curTrainingSampleCost;
 
           this.drawNetworkLayers(ctx, backwardRes);
-          await timer(50);
+          await timer(25);
         }
 
         costSum /= (normalizedTrainData.length * 2);
