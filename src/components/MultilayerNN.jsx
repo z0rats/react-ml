@@ -119,7 +119,6 @@ class MultilayerNN extends Component {
       canvasWidth, canvasHeight, neuronRadius, inputDotRadius, paddingX, paddingY,
     } = canvasSettings;
     //  { layers } = networkSettings;
-    console.log(layers);
 
     const canvasCenterX = canvasWidth / 2;
     const canvasCenterY = canvasHeight / 2;
@@ -196,7 +195,7 @@ class MultilayerNN extends Component {
       try {
         const { name } = file;
         const csvData = await readCsv(file, uploadingSettings);
-        console.log(csvData);
+        // console.log(csvData);
         const dataset = createDataSet(name, csvData);
         addDataset({ dataset });
       } catch (e) {
@@ -232,7 +231,6 @@ class MultilayerNN extends Component {
   };
 
   makeForwardPass = (inputs, targets, layers) => {
-    console.log(inputs, targets);
     const { updateNetSettings, networkSettings } = this.props;
     const { activation } = networkSettings;
     // const layers = _.cloneDeep(networkSettings.layers);
@@ -276,7 +274,6 @@ class MultilayerNN extends Component {
         currNeuron.delta = delta;
       }
     }
-    console.log('FwPass', layers);
     return layers;
     // updateNetSettings({ layers });
   };
@@ -298,7 +295,6 @@ class MultilayerNN extends Component {
         // currNeuron.setBias(currNeuron.bias + this.learningRate * delta);
       });
     }
-    console.log('BackPass', layers);
     return layers;
 
     // updateNetSettings({ layers });
@@ -344,7 +340,7 @@ class MultilayerNN extends Component {
         }
 
         costSum /= (normalizedTrainData.length * 2);
-        console.log('Ошибка сети', costSum);
+        // console.log('Net error', costSum);
       }
 
       const testingSet = datasets.find((ds) => ds.id === testingSetId);
@@ -379,7 +375,7 @@ class MultilayerNN extends Component {
         if (Number(prediction) !== Number(expected)) wrongCount += 1;
       });
       const accuracy = 100 - (wrongCount / testingSetData.length) * 100;
-      console.log('Результат тестирования', { inputsCount: testingSetData.length, wrongCount, accuracy });
+      // console.log('Test results', { inputsCount: testingSetData.length, wrongCount, accuracy });
 
       updateNetSettings({ layers: backwardRes, testResults: { accuracy }, costSum });
     } else {
@@ -415,7 +411,7 @@ class MultilayerNN extends Component {
                 onChange={this.handleChangeHeaders}
               />
             )}
-            label="Строка заголовка"
+            label="Header row"
           />
           <FormControlLabel
             control={(
@@ -425,12 +421,12 @@ class MultilayerNN extends Component {
                 onChange={this.handleChangeSkipEmptyLines}
               />
             )}
-            label="Пропускать пустые строки"
+            label="Skip empty lines"
           />
           <Dropzone
-            submitButtonContent="Загрузить"
-            inputWithFilesContent="Добавить файлы"
-            inputContent="Перетащите файлы или нажмите сюда"
+            submitButtonContent="Upload"
+            inputWithFilesContent="Add files"
+            inputContent="Drag files or click here"
             canCancel={false}
             onSubmit={this.handleSubmit}
             accept=".csv"
@@ -457,10 +453,10 @@ class MultilayerNN extends Component {
             </IconButton>
           </Grid>
           <Grid item xs={2}>
-            {`Функция потерь: ${networkSettings.costSum}`}
+            {`Loss function: ${networkSettings.costSum}`}
           </Grid>
           <Grid item xs={2}>
-            {`Точность на тестовом наборе: ${networkSettings.testResults.accuracy.toFixed(2)} %`}
+            {`Test accuracy: ${networkSettings.testResults.accuracy.toFixed(2)} %`}
           </Grid>
           <Grid item xs={10}>
             <IconButton
@@ -477,7 +473,7 @@ class MultilayerNN extends Component {
             >
               <RemoveRoundedIcon style={{ fontSize: 35 }} />
             </IconButton>
-            Скрытые слои
+            Hidden layers
           </Grid>
         </Grid>
         <Grid item xs={12}>

@@ -262,7 +262,7 @@ class HopfieldNet extends Component {
           </Grid>
           <Grid item xs={2}>
             <Typography id="discrete-slider" paragraph>
-              Размер сетки
+              Grid size
             </Typography>
             <Slider
               defaultValue={gridSize}
@@ -289,21 +289,21 @@ class HopfieldNet extends Component {
             variant="contained"
             onClick={this.updateWeights}
           >
-            Запомнить образ
+            Remember
           </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={this.clearCurrentImage}
           >
-            Очистить сетку
+            Clear grid
           </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={this.recognizeSignal}
           >
-            Распознать образ
+            Recognize
           </Button>
         </Grid>
       </div>

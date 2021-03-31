@@ -60,7 +60,7 @@ class MultilayerNNSettings extends React.Component {
     const { updateNetSettings } = this.props;
     if (value < 1) {
       updateNetSettings({ epochCount: 1 });
-      const errorMsg = 'Количество эпох не может быть меньше 1.';
+      const errorMsg = 'Epoch can\'t be less 1.';
       this.showErrorSnackbar(errorMsg);
     } else {
       updateNetSettings({ epochCount: Number(value) });
@@ -76,7 +76,7 @@ class MultilayerNNSettings extends React.Component {
     const newInputSize = Number(value);
 
     if (newInputSize < minNeuronsInLayer || newInputSize > maxNeuronsInLayer) {
-      const errorMsg = `Входной сигнал не может быть меньше ${minNeuronsInLayer} или больше ${maxNeuronsInLayer}.`;
+      const errorMsg = `Input signal can\'t be less then ${minNeuronsInLayer} or more then ${maxNeuronsInLayer}.`;
       this.showErrorSnackbar(errorMsg);
     } else {
       const layerId = 0;
@@ -95,7 +95,7 @@ class MultilayerNNSettings extends React.Component {
     const newOutputSize = Number(value);
 
     if (newOutputSize < minNeuronsInLayer || newOutputSize > maxNeuronsInLayer) {
-      const errorMsg = `Выходной сигнал не может быть меньше ${minNeuronsInLayer} или больше ${maxNeuronsInLayer}.`;
+      const errorMsg = `Output signal can\'t be less then ${minNeuronsInLayer} or more then ${maxNeuronsInLayer}.`;
       this.showErrorSnackbar(errorMsg);
     } else {
       const layerId = networkSettings.layers.length - 1;
@@ -108,7 +108,7 @@ class MultilayerNNSettings extends React.Component {
   handleChangeLearnRate = (value) => {
     const { updateNetSettings } = this.props;
     if (value < 0.001) {
-      const errorMsg = 'Коэффициент обучения не может быть меньше 0.001';
+      const errorMsg = 'Learning rate can\'t be less then 0.001';
       this.showErrorSnackbar(errorMsg);
     } else {
       updateNetSettings({ learningRate: Number(value) });
@@ -120,7 +120,7 @@ class MultilayerNNSettings extends React.Component {
       testingSetSelector, changeTrainSetSelector, updateNetSettings, datasets,
     } = this.props;
     if (id === testingSetSelector) {
-      const errorMsg = 'Обучающий и тестовый наборы не могут быть одинаковыми!';
+      const errorMsg = 'Train and test dataset can\'t be same!';
       this.showErrorSnackbar(errorMsg);
     } else {
       changeTrainSetSelector({ id });
@@ -133,7 +133,7 @@ class MultilayerNNSettings extends React.Component {
       trainingSetSelector, changeTestSetSelector, updateNetSettings, datasets,
     } = this.props;
     if (id === trainingSetSelector) {
-      const errorMsg = 'Обучающий и тестовый наборы не могут быть одинаковыми!';
+      const errorMsg = 'Train and test dataset can\'t be same!';
       this.showErrorSnackbar(errorMsg);
     } else {
       changeTestSetSelector({ id });
@@ -146,16 +146,16 @@ class MultilayerNNSettings extends React.Component {
       networkSettings, datasets, trainingSetSelector, testingSetSelector,
     } = this.props;
     const activationsList = Object.keys(activationFunctions);
-    console.log(networkSettings);
+    // console.log(networkSettings);
 
     return (
       <Paper elevation={3}>
         <Grid container spacing={2} alignItems="center" justify="center">
-          <Grid item xs={12}> Основные настройки </Grid>
+          <Grid item xs={12}> General settings </Grid>
           <Grid item xs={5}>
             <FormControl>
               <InputLabel shrink id="simple-select-placeholder-label-label">
-                Активация
+                Activation
               </InputLabel>
               <Select
                 labelId="simple-select-placeholder-label-label"
@@ -165,7 +165,7 @@ class MultilayerNNSettings extends React.Component {
               >
                 {activationsList.map((name, i) => <MenuItem value={name} key={i}>{name}</MenuItem>)}
               </Select>
-              <FormHelperText>По умолчанию sigmoid</FormHelperText>
+              <FormHelperText>Sigmoid by default</FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={5}>
@@ -177,13 +177,13 @@ class MultilayerNNSettings extends React.Component {
                   onChange={this.handleChangeBias}
                 />
               )}
-              label="Смещение"
+              label="Bias"
             />
           </Grid>
           <br />
           <Grid item xs={6}>
             <TextField
-              label="Количество эпох"
+              label="Epoch"
               type="number"
               margin="normal"
               variant="outlined"
@@ -193,7 +193,7 @@ class MultilayerNNSettings extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <TextField
-              label="Коэффициент обучения"
+              label="Learning rate"
               type="number"
               margin="normal"
               variant="outlined"
@@ -203,11 +203,11 @@ class MultilayerNNSettings extends React.Component {
           </Grid>
         </Grid>
         <Grid container spacing={2} alignItems="center" justify="center">
-          <Grid item xs={12}> Наборы данных </Grid>
+          <Grid item xs={12}> Datasets </Grid>
           <Grid item xs={6}>
             <FormControl>
               <InputLabel shrink id="simple-select-placeholder-label-label">
-                Обучающий
+                Train
               </InputLabel>
               <Select
                 labelId="simple-select-placeholder-label-label"
@@ -222,7 +222,7 @@ class MultilayerNNSettings extends React.Component {
           <Grid item xs={6}>
             <FormControl>
               <InputLabel shrink id="simple-select-placeholder-label-label">
-                Тестовый
+                Test
               </InputLabel>
               <Select
                 labelId="simple-select-placeholder-label-label"
@@ -236,7 +236,7 @@ class MultilayerNNSettings extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <TextField
-              label="Размер входного сигнала"
+              label="Input signal size"
               type="number"
               margin="normal"
               variant="outlined"
@@ -246,7 +246,7 @@ class MultilayerNNSettings extends React.Component {
           </Grid>
           <Grid item xs={6}>
             <TextField
-              label="Размер выхода"
+              label="Output size"
               type="number"
               margin="normal"
               variant="outlined"

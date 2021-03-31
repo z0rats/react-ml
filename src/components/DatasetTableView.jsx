@@ -79,14 +79,8 @@ class TableView extends React.Component {
           }}
           actions={[
             {
-              icon: () => <CallSplitRoundedIcon color="primary" />,
-              tooltip: 'Разделить набор данных',
-              isFreeAction: true,
-              onClick: () => this.splitDataset(),
-            },
-            {
               icon: () => <DeleteForeverRoundedIcon color="secondary" />,
-              tooltip: 'Удалить набор данных',
+              tooltip: 'Delete dataset',
               isFreeAction: true,
               onClick: () => this.deleteDataset(),
             },

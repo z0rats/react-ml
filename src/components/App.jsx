@@ -34,8 +34,8 @@ export default class App extends React.Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tab icon={<SchoolIcon />} label="Многослойная НС" value={0} />
-            <Tab icon={<SchoolIcon />} label="Нейросеть Хопфилда" value={1} />
+            <Tab icon={<SchoolIcon />} label="Multilayer network" value={0} />
+            <Tab icon={<SchoolIcon />} label="Hopfield network" value={1} />
           </Tabs>
         </Paper>
         {activeTab === 0 && (
