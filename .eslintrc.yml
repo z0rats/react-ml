@@ -16,22 +16,3 @@ plugins:
 rules:
   no-console: 0
   import/extensions: 0
-  no-unused-vars: 'warn'
-  react/prop-types: 'warn'
-  react/destructuring-assignment: 'warn'
-  react/jsx-props-no-spreading: 'warn'
-  react/no-array-index-key: 'warn'
-  no-param-reassign: 'warn'
-  react/jsx-one-expression-per-line: 'warn'
-  max-len: 'warn'
-  no-await-in-loop: 'warn'
-  no-unused-expressions: 'warn'
-  no-shadow: 'warn'
-  no-return-assign: 'warn'
-  no-confusing-arrow: 'warn'
-  no-underscore-dangle: 'warn'
-  no-undef: 'warn'
-  object-curly-newline: 'warn'
-  no-trailing-spaces: 'warn'
-  react/jsx-indent: 'warn'
-  no-multi-spaces: 'warn'
